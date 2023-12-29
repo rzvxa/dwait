@@ -1,7 +1,7 @@
 {
-  "name": "tryumph",
+  "name": "dwait",
   "version": "0.0.0-semantic-release",
-  "description": "Bring the \"Umph\" to the javascript's async error handling",
+  "description": "Deffered async operation made easy in Javascript",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": ["dist"],
@@ -15,32 +15,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rzvxa/tryumph.git"
+    "url": "git+https://github.com/rzvxa/dwait.git"
   },
   "keywords": [
-    "try",
     "async",
-    "errorHandling",
-    "dontThrow",
-    "fault tolerant",
-    "production",
-    "node.js",
-    "typescript",
-    "strong",
-    "rust",
-    "rust like",
-    "rust error handling",
-    "go",
-    "go like",
-    "go error handling",
-    "tryumph"
+    "await",
+    "defer",
+    "defferedAwait"
   ],
   "author": "rzvxa",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rzvxa/tryumph/issues"
+    "url": "https://github.com/rzvxa/dwait/issues"
   },
-  "homepage": "https://rzvxa.github.io/tryumph/",
+  "homepage": "https://rzvxa.github.io/dwait/",
   "devDependencies": {
     "@types/jest": "^29.5.11",
     "@typescript-eslint/eslint-plugin": "^6.16.0",
