@@ -66,14 +66,22 @@ function dwait<T, Y, P = Promise<T>>(
     },
   }) as DeferredPromise<T & { await: () => Promise<T> }>;
 }
+type AddSymbolToPrimitive<T> = T extends { [Symbol.toPrimitive]: infer V }
+  ? { [Symbol.toPrimitive]: V }
+  : NonNullable<unknown>;
 
+export type Wrapped<T> = {
+  [P in keyof T]: T[P];
+} &
+  AddSymbolToPrimitive<T>;
 async function test() {
-  const value = await dwait<string, string>(
+  const g = {} as Wrapped<string>;
+  const _a = g.split("ew");
+  // "string".toPrimitive();
+  const _b = await dwait<string, string>(
     (async (): Promise<string> => "OK")()
-  ).trim().await;
-  const value2 = await dwait<string, string>(
-    (async (): Promise<string> => "OK")()
-  )
+  ).split(" ").await;
+  const _c = await dwait<string, string>((async (): Promise<string> => "OK")())
     .trim()
     .toPromise();
 }
