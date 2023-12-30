@@ -7,7 +7,7 @@ export type DeferredFunction<T, Y = Promise<T>> = T extends (
 export type DeferredSync<T> = DeferredFunction<
     T,
     {
-        [P in keyof T]: DeferredPromise<T[P]>;
+        [P in keyof T]: T[P] extends BuiltinPromise<unknown> ? T[P] : DeferredPromise<T[P]>;
     }
 > &
     Promise<T>;
@@ -15,8 +15,8 @@ export type DeferredSync<T> = DeferredFunction<
 type BuiltinPromise<T> = Promise<T>;
 
 type Dwaited<T> = {
-    dwait: <U>() => DeferredPromise<U>;
-    await: () => BuiltinPromise<T>;
+    toPromise: () => BuiltinPromise<T>;
+    await:  BuiltinPromise<T>;
 };
 
 type DeferredPromise<T> = DeferredSync<

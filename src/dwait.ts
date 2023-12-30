@@ -21,10 +21,24 @@ function dwait<T, Y, P = Promise<T>>(
       }
 
       const prop = symbol as string;
-      if (asyncMethods.includes(prop as string)) {
+      console.log("here", prop);
+      if (asyncMethods.includes(prop)) {
         // @ts-expect-error we are sure that this property exists and is callable.
         return (...args: unknown[]) => dwait(task[prop](...args));
+      } else if (prop === "await") {
+        console.log("elseif", prop);
+        return task.then((target) => {
+          result.value = target;
+          return target;
+        });
+      } else if (prop === "toPromise") {
+        return () =>
+          task.then((target) => {
+            result.value = target;
+            return target;
+          });
       } else {
+        console.log("else");
         return dwait(
           task.then((target) => {
             result.value = target;
@@ -36,9 +50,10 @@ function dwait<T, Y, P = Promise<T>>(
       }
     },
     apply(_, thisArg, args) {
+      console.log("apply", thisArg, args, task);
       return dwait(
         task.then((target) => {
-          console.log(target, thisArg, args, rhs);
+          console.log("gg", target, thisArg, args, rhs);
           if (rhs?.value !== undefined) {
             // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
             return Reflect.apply(target, rhs.value, args);
@@ -53,7 +68,14 @@ function dwait<T, Y, P = Promise<T>>(
 }
 
 async function test() {
-  const value = await dwait((async (): Promise<string> => "OK")()).trim().await();
+  const value = await dwait<string, string>(
+    (async (): Promise<string> => "OK")()
+  ).trim().await;
+  const value2 = await dwait<string, string>(
+    (async (): Promise<string> => "OK")()
+  )
+    .trim()
+    .toPromise();
 }
 
 export { dwait };
