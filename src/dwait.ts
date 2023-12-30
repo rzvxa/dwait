@@ -3,11 +3,15 @@ import type DeferredPromise from "./deferredPromise";
 const DeferredPromiseSymbol = Symbol("dwait/DeferredPromise");
 const asyncMethods = ["then", "catch", "finally"];
 type Box<T> = { value: Awaited<T> | undefined };
+// type DeferredPromise<T> = T & { await: () => Promise<T> };
 
 /**
  * @async
  */
-function dwait<T, P = Promise<T>>(promise: P, rhs?: Box<unknown>): Promise<T> {
+function dwait<T, Y, P = Promise<T>>(
+  promise: P,
+  rhs?: Box<Y>
+): DeferredPromise<T> {
   const task = Promise.resolve(promise);
   const result: Box<P> = { value: undefined };
   return new Proxy<object>(function () {}, {
@@ -45,7 +49,11 @@ function dwait<T, P = Promise<T>>(promise: P, rhs?: Box<unknown>): Promise<T> {
         })
       );
     },
-  }) as DeferredPromise<T> & Promise<T>;
+  }) as DeferredPromise<T & { await: () => Promise<T> }>;
+}
+
+async function test() {
+  const value = await dwait((async (): Promise<string> => "OK")()).trim().await();
 }
 
 export { dwait };

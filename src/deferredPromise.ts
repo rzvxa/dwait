@@ -1,7 +1,7 @@
 export type DeferredFunction<T, Y = Promise<T>> = T extends (
     ...args: infer U
 ) => infer S
-    ? (...args: U) => DeferredPromise<S>
+    ? (...args: U) => S extends BuiltinPromise<unknown> ? S : DeferredPromise<S>
     : Y;
 
 export type DeferredSync<T> = DeferredFunction<
@@ -12,6 +12,15 @@ export type DeferredSync<T> = DeferredFunction<
 > &
     Promise<T>;
 
-type DeferredPromise<T> = DeferredSync<T extends Promise<infer Y> ? Y : T>;
+type BuiltinPromise<T> = Promise<T>;
+
+type Dwaited<T> = {
+    dwait: <U>() => DeferredPromise<U>;
+    await: () => BuiltinPromise<T>;
+};
+
+type DeferredPromise<T> = DeferredSync<
+    (T extends Promise<infer Y> ? Y : T) & Dwaited<T>
+>;
 
 export default DeferredPromise;
