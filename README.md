@@ -24,7 +24,7 @@ And instead, write more readable(in my opinion) code like this:
     .toJson()
     .username
     .trim()
-    .await;
+    .await; // or .toPromise();
 ```
 
 # Why?
