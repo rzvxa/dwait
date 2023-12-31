@@ -33,6 +33,10 @@ class TestClass {
   ping<T>(value: T): T {
     return value;
   }
+
+  get [Symbol.toStringTag]() {
+    return "Test Class";
+  }
 }
 
 describe("dwait Tests", () => {
@@ -79,9 +83,13 @@ describe("dwait Tests", () => {
   });
   test("should return a DeferredPromise<string> which contains search function acting like the native string", async () => {
     const dwaitPromise = dwait(resolveClass()).foo;
-    await expect(
-      dwaitPromise.search("K").await
-    ).resolves.toEqual(OKA.search("K"));
+    await expect(dwaitPromise.search("K").await).resolves.toEqual(
+      OKA.search("K")
+    );
+  });
+  test("should return a DeferredPromise<object> which contains toString function acting like the native object", async () => {
+    const dwaitPromise = dwait(resolveClass()).baz();
+    await expect(dwaitPromise.toString()).resolves.toEqual(classA.toString());
   });
   test("should provide a promise with the exact same result as native version", async () => {
     const dwaitPromise = dwait(resolveMock()).toPromise();
