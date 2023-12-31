@@ -60,6 +60,10 @@ describe("dwait Tests", () => {
     const dwaitPromise = dwait(resolveClass()).baz().foo;
     await expect(dwaitPromise.await).resolves.toEqual(OKB);
   });
+  test("should return throw on awaiting rejected promises", async () => {
+    const dwaitPromise = dwait(rejectMock());
+    await expect(dwaitPromise).rejects.toEqual(ERROR);
+  });
   test("should return a DeferredPromise<string> which contains split function acting like the native string", async () => {
     const dwaitPromise = dwait(resolveClass()).foo;
     await expect(dwaitPromise.split("K").await).resolves.toEqual(
