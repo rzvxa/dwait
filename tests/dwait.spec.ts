@@ -77,6 +77,12 @@ describe("dwait Tests", () => {
       dwaitPromise.replace(OK, NUMBER.toString())?.await
     ).resolves.toEqual(OKA.replace(OK, NUMBER.toString()));
   });
+  test("should return a DeferredPromise<string> which contains search function acting like the native string", async () => {
+    const dwaitPromise = dwait(resolveClass()).foo;
+    await expect(
+      dwaitPromise.search("K").await
+    ).resolves.toEqual(OKA.search("K"));
+  });
   test("should provide a promise with the exact same result as native version", async () => {
     const dwaitPromise = dwait(resolveMock()).toPromise();
     await expect(dwaitPromise).resolves.toBe(OK);

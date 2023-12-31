@@ -18,6 +18,7 @@ type StringSymbols<T> = T extends string
               searchValue: string | RegExp,
               replaceValue: string
           ) => DeferredPromise<string>;
+          search: (regexp: string | RegExp) => DeferredPromise<number>;
       }
     : NonNullable<unknown>;
 
