@@ -1,4 +1,10 @@
 # dwait
+
+![GitHub License](https://img.shields.io/github/license/rzvxa/dwait)
+[![Test](https://github.com/rzvxa/dwait/actions/workflows/test.yml/badge.svg)](https://github.com/rzvxa/dwait/actions/workflows/test.yml)
+![Coveralls branch](https://img.shields.io/coverallsCoverage/github/rzvxa/dwait)
+[![Documentation](https://img.shields.io/badge/visit-docs-brightgreen)](https://rzvxa.github.io/dwait/)
+
 Deffered async operation made easy in Javascript
 
 # What is it?

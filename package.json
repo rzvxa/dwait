@@ -1,7 +1,7 @@
 {
   "name": "dwait",
   "version": "0.0.0-semantic-release",
-  "description": "Deffered async operation made easy in Javascript",
+  "description": "Deferred async operation made easy in JavaScript",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": ["dist"],
@@ -21,7 +21,10 @@
     "async",
     "await",
     "defer",
-    "defferedAwait"
+    "deferredAwait",
+    "chain",
+    "functional",
+    "fp"
   ],
   "author": "rzvxa",
   "license": "MIT",
