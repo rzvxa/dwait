@@ -1,7 +1,3 @@
-type ToPrimitiveSymbol<T> = T extends { [Symbol.toPrimitive]: infer V }
-    ? { [Symbol.toPrimitive]: V }
-    : NonNullable<unknown>;
-
 type StringSymbols<T> = T extends string
     ? {
           split: (
@@ -22,7 +18,7 @@ type StringSymbols<T> = T extends string
       }
     : NonNullable<unknown>;
 
-type PrimitiveSymbols<T> = StringSymbols<T> & ToPrimitiveSymbol<T>;
+type DeferredSymbols<T> = StringSymbols<T>;
 
 export type DeferredFunction<T, Y = Promise<T>> = T extends (
     ...args: infer U
@@ -38,7 +34,7 @@ export type DeferredSync<T> = DeferredFunction<
             : DeferredPromise<T[P]>;
     }
 > &
-    PrimitiveSymbols<T>;
+    DeferredSymbols<T>;
 
 type BuiltinPromise<T> = Promise<T>;
 
