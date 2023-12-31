@@ -8,12 +8,12 @@ type Box<T> = { value: Awaited<T> | undefined };
 /**
  * @async
  */
-function dwait<T, Y, P = Promise<T>>(
-  promise: P,
+function dwait<T, Y>(
+  promise: Promise<T>,
   rhs?: Box<Y>
 ): DeferredPromise<T> {
   const task = Promise.resolve(promise);
-  const result: Box<P> = { value: undefined };
+  const result: Box<Promise<T>> = { value: undefined };
   return new Proxy<object>(function () {}, {
     get(_, symbol) {
       if (symbol === DeferredPromiseSymbol) {
@@ -78,7 +78,7 @@ async function test() {
   const g = {} as Wrapped<string>;
   const _a = g.split("ew");
   // "string".toPrimitive();
-  const _b = await dwait<string, string>(
+  const _b = await dwait(
     (async (): Promise<string> => "OK")()
   ).split(" ").await;
   const _c = await dwait<string, string>((async (): Promise<string> => "OK")())
