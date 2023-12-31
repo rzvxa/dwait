@@ -55,11 +55,20 @@ describe("dwait Tests", () => {
   });
   test("should return a DeferredPromise<string> which contains split function", async () => {
     const dwaitPromise = dwait(resolveClass()).foo;
-    await expect(dwaitPromise.match(OK)?.await).resolves.toEqual(["O", "A"]);
-  });
-  test("should return a DeferredPromise<string> which contains split function", async () => {
-    const dwaitPromise = dwait(resolveClass()).foo;
     await expect(dwaitPromise.split("K").await).resolves.toEqual(["O", "A"]);
+  });
+  test("should return a DeferredPromise<string> which contains match function", async () => {
+    const dwaitPromise = dwait(resolveClass()).foo;
+    await expect(dwaitPromise.match(OK)?.await).resolves.toEqual(
+      expect.arrayContaining(["OK"])
+    );
+  });
+  test("should return a DeferredPromise<string> which contains matchAll function", async () => {
+    console.warn(Array.from("OKA".matchAll(/^OK/g)));
+    const matchResult = await dwait(resolveClass()).foo.matchAll(/^OK/g)?.await;
+    expect(Array.from(matchResult)).toEqual(
+      expect.arrayContaining([expect.arrayContaining(["OK"])])
+    );
   });
   test("should provide a promise with the exact same result as native version", async () => {
     const dwaitPromise = dwait(resolveMock()).toPromise();

@@ -11,6 +11,7 @@ type StringSymbols<T> = T extends string
           match: (
               regexp: string | RegExp
           ) => DeferredPromise<RegExpMatchArray | null>;
+          matchAll: (regexp: RegExp) => DeferredPromise<IterableIterator<RegExpMatchArray>>;
       }
     : NonNullable<unknown>;
 
