@@ -1,8 +1,10 @@
 import type DeferredPromise from "./deferredPromise";
 
-const DeferredPromiseSymbol = Symbol("dwait/DeferredPromise");
 const asyncMethods = ["then", "catch", "finally"];
 type Box<T> = { value: Awaited<T> | undefined };
+
+// istanbul ignore next no op code
+function noop() {}
 
 /**
  * @async
@@ -10,12 +12,8 @@ type Box<T> = { value: Awaited<T> | undefined };
 function dwait<T, Y>(promise: Promise<T>, lhs?: Box<Y>): DeferredPromise<T> {
   const task = Promise.resolve(promise);
   const result: Box<Promise<T>> = { value: undefined };
-  return new Proxy<object>(function () {}, {
+  return new Proxy<object>(noop, {
     get(_, symbol) {
-      if (symbol === DeferredPromiseSymbol) {
-        return task;
-      }
-
       const prop = symbol as string;
       if (asyncMethods.includes(prop)) {
         // @ts-expect-error we are sure that this property exists and is callable.

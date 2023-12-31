@@ -91,6 +91,11 @@ describe("dwait Tests", () => {
     const dwaitPromise = dwait(resolveClass()).baz();
     await expect(dwaitPromise.toString()).resolves.toEqual(classA.toString());
   });
+  test("should return a DeferredPromise which isn't callable", async () => {
+    const dwaitPromise = dwait(resolveClass());
+    // @ts-expect-error it isn't callabe
+    await expect(dwaitPromise()).rejects.toThrow();
+  });
   test("should provide a promise with the exact same result as native version", async () => {
     const dwaitPromise = dwait(resolveMock()).toPromise();
     await expect(dwaitPromise).resolves.toBe(OK);
