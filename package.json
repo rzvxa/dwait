@@ -23,6 +23,7 @@
     "defer",
     "deferredAwait",
     "chain",
+    "promise",
     "functional",
     "fp"
   ],
