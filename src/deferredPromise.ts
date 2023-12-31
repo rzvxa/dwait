@@ -2,16 +2,19 @@ type ToPrimitiveSymbol<T> = T extends { [Symbol.toPrimitive]: infer V }
     ? { [Symbol.toPrimitive]: V }
     : NonNullable<unknown>;
 
-type StringSplit<T> = T extends string
+type StringSymbols<T> = T extends string
     ? {
           split: (
               separator: string | RegExp,
               limit?: number
           ) => DeferredPromise<string[]>;
+          match: (
+              regexp: string | RegExp
+          ) => DeferredPromise<RegExpMatchArray | null>;
       }
     : NonNullable<unknown>;
 
-type PrimitiveSymbols<T> = StringSplit<T> & ToPrimitiveSymbol<T>;
+type PrimitiveSymbols<T> = StringSymbols<T> & ToPrimitiveSymbol<T>;
 
 export type DeferredFunction<T, Y = Promise<T>> = T extends (
     ...args: infer U

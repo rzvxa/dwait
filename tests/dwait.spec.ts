@@ -46,12 +46,20 @@ describe("dwait Tests", () => {
   const rejectMock: () => Promise<string> = jest.fn().mockRejectedValue(ERROR);
 
   test("should return a DeferredPromise which has a toPromise function containing the native promise of the operation chain", async () => {
-    const dwaitPromise = dwait<TestClass, unknown>(resolveClass()).baz().bar();
+    const dwaitPromise = dwait(resolveClass()).baz().bar();
     await expect(dwaitPromise.toPromise()).resolves.toEqual(NUMBER);
   });
   test("should return a DeferredPromise which has a await property containing the native promise of the operation chain", async () => {
-    const dwaitPromise = dwait<TestClass, unknown>(resolveClass()).baz().bar();
-    await expect(dwaitPromise.toPromise()).resolves.toEqual(NUMBER);
+    const dwaitPromise = dwait(resolveClass()).baz().foo;
+    await expect(dwaitPromise.await).resolves.toEqual(`${OK}B`);
+  });
+  test("should return a DeferredPromise<string> which contains split function", async () => {
+    const dwaitPromise = dwait(resolveClass()).foo;
+    await expect(dwaitPromise.match(OK)?.await).resolves.toEqual(["O", "A"]);
+  });
+  test("should return a DeferredPromise<string> which contains split function", async () => {
+    const dwaitPromise = dwait(resolveClass()).foo;
+    await expect(dwaitPromise.split("K").await).resolves.toEqual(["O", "A"]);
   });
   test("should provide a promise with the exact same result as native version", async () => {
     const dwaitPromise = dwait(resolveMock()).toPromise();
