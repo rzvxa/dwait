@@ -115,7 +115,7 @@ describe("dwait Tests", () => {
       expect.objectContaining({ foo: OK + OK })
     );
   });
-  test("should be able to wrap a constructor successfully", async () => {
+  test("should be able to wrap functions with returning promises", async () => {
     const dwaitPromise = dwait(new TestClass(OK, NUMBER, OK)).addBar();
     await expect(dwaitPromise.await).resolves.toEqual(
       NUMBER + 1
