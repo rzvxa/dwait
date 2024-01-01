@@ -117,8 +117,10 @@ describe("dwait Tests", () => {
   });
   test("should be able to wrap functions with returning promises", async () => {
     const dwaitPromise = dwait(new TestClass(OK, NUMBER, OK)).addBar();
-    await expect(dwaitPromise.await).resolves.toEqual(
-      NUMBER + 1
-    );
+    await expect(dwaitPromise.await).resolves.toEqual(NUMBER + 1);
+  });
+  test("should be able to wrap a function and use it as a deferred function", async () => {
+    const dwaitFunc = dwait(resolveMock);
+    await expect(dwaitFunc().await).resolves.toEqual(OK);
   });
 });
