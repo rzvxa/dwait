@@ -28,7 +28,7 @@ function noop() {}
  * @internal
  */
 function dwaitInternal<T, Y>(
-  promise: Promise<T>,
+  promise: Promise<T> | T,
   lhs?: Box<Y>
 ): DeferredPromise<T> {
   const task = Promise.resolve(promise);
@@ -84,7 +84,7 @@ function dwaitInternal<T, Y>(
  *
  * @returns A {@link DeferredPromise} pointing to the target `Promise`
  */
-function dwait<T>(promise: Promise<T>): DeferredPromise<T> {
+function dwait<T>(promise: Promise<T> | T): DeferredPromise<T> {
   return dwaitInternal(promise);
 }
 

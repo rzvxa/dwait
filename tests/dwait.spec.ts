@@ -104,4 +104,10 @@ describe("dwait Tests", () => {
     const dwaitPromise = dwait(resolveMock()).toPromise();
     await expect(dwaitPromise).resolves.toBe(OK);
   });
+  test("should be able to wrap a constructor successfully", async () => {
+    const dwaitPromise = dwait(new TestClass(OK, NUMBER, OK));
+    await expect(dwaitPromise.await).resolves.toEqual(
+      expect.objectContaining({ foo: OK + OK })
+    );
+  });
 });
