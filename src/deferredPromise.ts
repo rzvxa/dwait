@@ -52,7 +52,7 @@ type DeferredSync<T> = DeferredFunction<
 /**
  * A specific named version of native Promise used to infer the return type of `await` and `toPromise`.
  */
-type BuiltinPromise<T> = Promise<T>;
+type BuiltinPromise<T> = Promise<T> & { builtinPromise: never };
 
 /**
  * Additional methods of {@link DeferredPromise}.

@@ -34,6 +34,11 @@ class TestClass {
     return value;
   }
 
+  async addBar(): Promise<number> {
+    this._bar += 1;
+    return this._bar;
+  }
+
   get [Symbol.toStringTag]() {
     return "Test Class";
   }
@@ -108,6 +113,12 @@ describe("dwait Tests", () => {
     const dwaitPromise = dwait(new TestClass(OK, NUMBER, OK));
     await expect(dwaitPromise.await).resolves.toEqual(
       expect.objectContaining({ foo: OK + OK })
+    );
+  });
+  test("should be able to wrap a constructor successfully", async () => {
+    const dwaitPromise = dwait(new TestClass(OK, NUMBER, OK)).addBar();
+    await expect(dwaitPromise.await).resolves.toEqual(
+      NUMBER + 1
     );
   });
 });
