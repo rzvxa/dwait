@@ -123,4 +123,11 @@ describe("dwait Tests", () => {
     const dwaitFunc = dwait(resolveMock);
     await expect(dwaitFunc().await).resolves.toEqual(OK);
   });
+  test("should be able to wrap cycling dependencies", async () => {
+    let dwaitPromise = dwait(resolveClass());
+    for (let i = 0, len = 999; i < len; ++i) {
+      dwaitPromise = dwaitPromise.baz();
+    }
+    await expect(dwaitPromise.foo.await).resolves.toEqual(OKB);
+  });
 });
