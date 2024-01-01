@@ -27,6 +27,18 @@ And instead, write more readable(in my opinion) code like this:
     .await; // or .toPromise();
 ```
 
+Or you can pass the function itself to the `dwait` function and get a deferred function you can use directly!
+
+```js
+  const getUserDeferred = dwait(getUserAsync);
+  const username = await getUserDeferred()
+    .body
+    .toJson()
+    .username
+    .trim()
+    .await; // or .toPromise();
+```
+
 # Why?
 If you have ever seen any async code from `Rust` language you can immediately see the source of inspiration for the `dwait` library.
 Most languages have opted-in for writing the `await` keyword before the expression, This way it will read more naturally. For example something like this:
