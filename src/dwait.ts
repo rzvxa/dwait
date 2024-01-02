@@ -33,17 +33,14 @@ function dwaitInternal<T, Y>(
 ): DeferredPromise<T> {
   const task = Promise.resolve(promise);
   const result: Box<Promise<T>> = { value: undefined };
-  const then = (callback?: (target: unknown) => Promise<T>): Promise<T> => {
-    return task.then((target) => {
-      result.value = target;
-      if (callback) {
-        return callback(target);
-      } else {
-        return target;
-      }
+  const then = (callback?: (target: unknown) => Awaited<T>): Promise<T> => {
+    return task.then((t) => {
+      const value = callback ? callback(t) : t;
+      result.value = t;
+      return value;
     });
   };
-  return new Proxy<object>(DeferredOperation, {
+  const proxy = new Proxy<object>(DeferredOperation, {
     get(_, symbol) {
       const prop = symbol as string;
       if (ASYNC_METHODS.includes(prop)) {
@@ -55,8 +52,14 @@ function dwaitInternal<T, Y>(
         return () => then();
       } else {
         return dwaitInternal(
-          // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
-          then((target) => target[prop]),
+          then((target) => {
+            if (target !== undefined) {
+              // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
+              return target[prop];
+            } else {
+              return null;
+            }
+          }),
           result
         );
       }
@@ -64,7 +67,11 @@ function dwaitInternal<T, Y>(
     apply(_, thisArg, args) {
       return dwaitInternal(
         then((target) => {
-          if (lhs?.value !== undefined) {
+          if (!target) {
+            return undefined as Awaited<T>;
+          } else if (typeof target === "string") {
+            return target as Awaited<T>;
+          } else if (lhs?.value !== undefined) {
             // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
             return Reflect.apply(target, lhs.value, args);
           } else {
@@ -76,6 +83,7 @@ function dwaitInternal<T, Y>(
       );
     },
   }) as DeferredPromise<T>;
+  return proxy;
 }
 
 /**

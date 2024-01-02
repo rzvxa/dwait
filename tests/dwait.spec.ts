@@ -144,4 +144,10 @@ describe("dwait Tests", () => {
     }
     await expect(dwaitPromise.foo.await).resolves.toEqual(OKB);
   });
+
+  test("should return the same DeferredPromise as long as a reference of that DeferredPromise exists on the heap", async () => {
+    const dwaitPromise1 = dwait(resolveClass());
+    const dwaitPromise2 = dwait(resolveClass());
+    expect(dwaitPromise1).toBe(dwaitPromise1);
+  });
 });
