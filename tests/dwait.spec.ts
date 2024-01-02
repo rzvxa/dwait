@@ -153,9 +153,10 @@ describe("dwait Tests", () => {
   });
 
   test("should return the same DeferredPromise as long as a reference of that DeferredPromise exists on the heap", async () => {
-    const dwaitPromise1 = dwait(resolveClass());
-    const dwaitPromise2 = dwait(resolveClass());
-    expect(dwaitPromise1).toBe(dwaitPromise1);
+    const klass = resolveClass();
+    const dwaitPromise1 = dwait(klass);
+    const dwaitPromise2 = dwait(klass);
+    expect(dwaitPromise1).toBe(dwaitPromise2);
   });
 
   test("should throw on accessing properties on null or undefined deferred operations", async () => {
