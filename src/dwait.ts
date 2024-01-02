@@ -1,5 +1,9 @@
 import type Box from "./box";
 import type DeferredPromise from "./deferredPromise";
+import DeferredPromiseSymbol from "./deferredPromiseSymbol";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const WEAK_MAP = new WeakMap<object, DeferredPromise<any>>();
 
 /**
  * List of async methods to let pass through {@link DeferredPromise}
@@ -11,6 +15,22 @@ const ASYNC_METHODS = ["then", "catch", "finally"];
  */
 // istanbul ignore next no op code
 function DeferredOperation() {}
+
+/**
+ * Checks the input to see if it is a {@link DeferredPromise} or not.
+ *
+ * @param promise - The input to test.
+ *
+ * @returns True if `promise` is a {@link DeferredPromise} otherwise will return false.
+ */
+function isDeferredPromise(promise: unknown): boolean {
+  if (promise === null || promise === undefined) {
+    return false;
+  } else {
+    // @ts-expect-error we are sure that this property exists and is callable.
+    return promise[DeferredPromiseSymbol] ? true : false;
+  }
+}
 
 /**
  * This function will take a `Promise` and will wrap it as a {@link DeferredPromise}
@@ -31,20 +51,29 @@ function dwaitInternal<T, Y>(
   promise: Promise<T> | T,
   lhs?: Box<Y>
 ): DeferredPromise<T> {
+  const canCache = promise && typeof promise === "object";
+  if (isDeferredPromise(promise)) {
+    return promise as DeferredPromise<T>;
+  } else if (canCache) {
+    const result = WEAK_MAP.get(promise);
+    if (result) {
+      return result as DeferredPromise<T>;
+    }
+  }
   const task = Promise.resolve(promise);
   const result: Box<Promise<T>> = { value: undefined };
-  const then = (callback?: (target: unknown) => Promise<T>): Promise<T> => {
-    return task.then((target) => {
-      result.value = target;
-      if (callback) {
-        return callback(target);
-      } else {
-        return target;
-      }
+  const then = (callback?: (target: unknown) => Awaited<T>): Promise<T> => {
+    return task.then((t) => {
+      const value = callback ? callback(t) : t;
+      result.value = t;
+      return value;
     });
   };
-  return new Proxy<object>(DeferredOperation, {
+  const proxy = new Proxy<object>(DeferredOperation, {
     get(_, symbol) {
+      if (symbol === DeferredPromiseSymbol) {
+        return true;
+      }
       const prop = symbol as string;
       if (ASYNC_METHODS.includes(prop)) {
         // @ts-expect-error we are sure that this property exists and is callable.
@@ -55,8 +84,16 @@ function dwaitInternal<T, Y>(
         return () => then();
       } else {
         return dwaitInternal(
-          // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
-          then((target) => target[prop]),
+          then((target) => {
+            if (target === undefined || target === null) {
+              throw new RangeError(
+                `Property ${prop.toString()} does not exists on ${target}.`
+              );
+            } else {
+              // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
+              return target[prop];
+            }
+          }),
           result
         );
       }
@@ -64,11 +101,17 @@ function dwaitInternal<T, Y>(
     apply(_, thisArg, args) {
       return dwaitInternal(
         then((target) => {
-          if (lhs?.value !== undefined) {
-            // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
+          if (typeof target !== "function") {
+            console.log(target, thisArg, args);
+            const numberOfArguments = args?.length || 0;
+            throw new TypeError(
+              `${target} is not a function, unexpected call to ${target} passing (${
+                args.join(", ") || "nothing"
+              }) as arguments.`
+            );
+          } else if (lhs?.value !== undefined) {
             return Reflect.apply(target, lhs.value, args);
           } else {
-            // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
             return Reflect.apply(target, thisArg, args);
           }
         }),
@@ -76,6 +119,11 @@ function dwaitInternal<T, Y>(
       );
     },
   }) as DeferredPromise<T>;
+
+  if (canCache) {
+    WEAK_MAP.set(promise, proxy);
+  }
+  return proxy;
 }
 
 /**
@@ -89,4 +137,5 @@ function dwait<T>(promise: Promise<T> | T): DeferredPromise<T> {
   return dwaitInternal(promise);
 }
 
+export { isDeferredPromise };
 export default dwait;

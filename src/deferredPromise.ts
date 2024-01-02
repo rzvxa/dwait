@@ -69,6 +69,11 @@ type Dwaited<T> = {
      * The underlying native `Promise` used for awaiting the deferred `async` chain operation.
      */
     await: BuiltinPromise<T>;
+
+    /**
+     * Returns a deferred string representation of promise's content.
+     */
+    toString: () => string;
 };
 
 /**
