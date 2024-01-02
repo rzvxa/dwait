@@ -101,15 +101,17 @@ function dwaitInternal<T, Y>(
     apply(_, thisArg, args) {
       return dwaitInternal(
         then((target) => {
-          if (!target) {
-            return undefined as Awaited<T>;
-          } else if (typeof target === "string") {
-            return target as Awaited<T>;
+          if (typeof target !== "function") {
+            console.log(target, thisArg, args);
+            const numberOfArguments = args?.length || 0;
+            throw new TypeError(
+              `${target} is not a function, unexpected call to ${target} passing (${
+                args.join(", ") || "nothing"
+              }) as arguments.`
+            );
           } else if (lhs?.value !== undefined) {
-            // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
             return Reflect.apply(target, lhs.value, args);
           } else {
-            // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
             return Reflect.apply(target, thisArg, args);
           }
         }),
