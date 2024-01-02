@@ -33,13 +33,13 @@ function dwaitInternal<T, Y>(
 ): DeferredPromise<T> {
   const task = Promise.resolve(promise);
   const result: Box<Promise<T>> = { value: undefined };
-  const then = (cb?: (target: unknown) => Promise<T>): Promise<T> => {
-    return task.then((t) => {
-      result.value = t;
-      if (cb) {
-        return cb(t);
+  const then = (callback?: (target: unknown) => Promise<T>): Promise<T> => {
+    return task.then((target) => {
+      result.value = target;
+      if (callback) {
+        return callback(target);
       } else {
-        return t;
+        return target;
       }
     });
   };
@@ -75,7 +75,7 @@ function dwaitInternal<T, Y>(
         result
       );
     },
-  }) as DeferredPromise<T & { await: () => Promise<T> }>;
+  }) as DeferredPromise<T>;
 }
 
 /**
