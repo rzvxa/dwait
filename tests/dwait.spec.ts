@@ -1,8 +1,9 @@
-import dwait from "../src/dwait";
+import dwait, { isDeferredPromise } from "../src/dwait";
 
 const OK = "OK";
 const ERROR = "ERROR";
 const NUMBER = 12345;
+const OBJECT = {};
 const OKA = `${OK}A`;
 const OKB = `${OK}B`;
 const MATCH_OK = /^OK/g;
@@ -155,5 +156,69 @@ describe("dwait Tests", () => {
     const dwaitPromise1 = dwait(resolveClass());
     const dwaitPromise2 = dwait(resolveClass());
     expect(dwaitPromise1).toBe(dwaitPromise1);
+  });
+});
+
+describe("isDeferredPromise Tests", () => {
+  const resolveMock: () => Promise<string> = jest.fn().mockResolvedValue(OK);
+
+  test("should return false on normal promises", async () => {
+    const target = resolveMock();
+    expect(isDeferredPromise(target)).toBe(false);
+  });
+
+  test("should return false on normal objects", async () => {
+    const target = OBJECT;
+    expect(isDeferredPromise(target)).toBe(false);
+  });
+
+  test("should return false on normal numbers", async () => {
+    const target = NUMBER;
+    expect(isDeferredPromise(target)).toBe(false);
+  });
+
+  test("should return false on normal strings", async () => {
+    const target = OK;
+    expect(isDeferredPromise(target)).toBe(false);
+  });
+
+  test("should return false on normal null values", async () => {
+    const target = null;
+    expect(isDeferredPromise(target)).toBe(false);
+  });
+
+  test("should return false on normal undefined values", async () => {
+    const target = undefined;
+    expect(isDeferredPromise(target)).toBe(false);
+  });
+
+  test("should return true on deferred promises", async () => {
+    const target = dwait(resolveMock());
+    expect(isDeferredPromise(target)).toBe(true);
+  });
+
+  test("should return true on deferred objects", async () => {
+    const target = dwait(OBJECT);
+    expect(isDeferredPromise(target)).toBe(true);
+  });
+
+  test("should return true on deferred numbers", async () => {
+    const target = dwait(NUMBER);
+    expect(isDeferredPromise(target)).toBe(true);
+  });
+
+  test("should return true on deferred strings", async () => {
+    const target = dwait(OK);
+    expect(isDeferredPromise(target)).toBe(true);
+  });
+
+  test("should return true on deferred null values", async () => {
+    const target = dwait(null);
+    expect(isDeferredPromise(target)).toBe(true);
+  });
+
+  test("should return true on deferred undefined values", async () => {
+    const target = dwait(undefined);
+    expect(isDeferredPromise(target)).toBe(true);
   });
 });
