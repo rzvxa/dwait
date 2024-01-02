@@ -76,11 +76,13 @@ function dwaitInternal<T, Y>(
       } else {
         return dwaitInternal(
           then((target) => {
-            if (target !== undefined) {
+            if (target === undefined || target === null) {
+              throw new RangeError(
+                `Property ${prop} does not exists on ${target}.`
+              );
+            } else {
               // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
               return target[prop];
-            } else {
-              return null;
             }
           }),
           result
