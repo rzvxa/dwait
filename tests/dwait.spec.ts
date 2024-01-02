@@ -157,6 +157,17 @@ describe("dwait Tests", () => {
     const dwaitPromise2 = dwait(resolveClass());
     expect(dwaitPromise1).toBe(dwaitPromise1);
   });
+
+  test("should throw on accessing properties on null or undefined deferred operations", async () => {
+    const nullPromise = dwait(null)[NUMBER];
+    const undefinedPromise = dwait(undefined)[NUMBER];
+    await expect(nullPromise).rejects.toEqual(
+      new RangeError(`Property ${NUMBER} does not exists on null.`)
+    );
+    await expect(undefinedPromise).rejects.toEqual(
+      new RangeError(`Property ${NUMBER} does not exists on undefined.`)
+    );
+  });
 });
 
 describe("isDeferredPromise Tests", () => {
