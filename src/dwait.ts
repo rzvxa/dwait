@@ -2,6 +2,9 @@ import type Box from "./box";
 import type DeferredPromise from "./deferredPromise";
 import DeferredPromiseSymbol from "./deferredPromiseSymbol";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const WEAK_MAP = new WeakMap<object, DeferredPromise<any>>();
+
 /**
  * List of async methods to let pass through {@link DeferredPromise}
  */
@@ -48,8 +51,14 @@ function dwaitInternal<T, Y>(
   promise: Promise<T> | T,
   lhs?: Box<Y>
 ): DeferredPromise<T> {
+  const canCache = promise && typeof promise === "object";
   if (isDeferredPromise(promise)) {
     return promise as DeferredPromise<T>;
+  } else if (canCache) {
+    const result = WEAK_MAP.get(promise);
+    if (result) {
+      return result as DeferredPromise<T>;
+    }
   }
   const task = Promise.resolve(promise);
   const result: Box<Promise<T>> = { value: undefined };
@@ -78,7 +87,7 @@ function dwaitInternal<T, Y>(
           then((target) => {
             if (target === undefined || target === null) {
               throw new RangeError(
-                `Property ${prop} does not exists on ${target}.`
+                `Property ${prop.toString()} does not exists on ${target}.`
               );
             } else {
               // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
@@ -108,6 +117,10 @@ function dwaitInternal<T, Y>(
       );
     },
   }) as DeferredPromise<T>;
+
+  if (canCache) {
+    WEAK_MAP.set(promise, proxy);
+  }
   return proxy;
 }
 
