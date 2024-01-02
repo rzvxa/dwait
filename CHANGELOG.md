@@ -1,3 +1,18 @@
+# [1.1.0](https://github.com/rzvxa/dwait/compare/v1.0.3...v1.1.0) (2024-01-02)
+
+
+### Bug Fixes
+
+* add error on accessing properties of null/undefined. ([c78f59c](https://github.com/rzvxa/dwait/commit/c78f59ceb2a34612fa4ea63bd88b874799627e5f))
+* isDeferredPromise with null and undefined inputs. ([88efec6](https://github.com/rzvxa/dwait/commit/88efec6761c9af1208df856f736c01257d7beb88))
+* issue in isDeferredPromise function. ([f50f51f](https://github.com/rzvxa/dwait/commit/f50f51f487fbecd8cb820cde0d3e9ee0d521597a))
+* redundant deferring on already deferred promises. ([7507662](https://github.com/rzvxa/dwait/commit/750766247b7250cb10fab814f9f98df9ae9e1c4f))
+
+
+### Features
+
+* add caching for previously deferred objects. ([0e2e3c4](https://github.com/rzvxa/dwait/commit/0e2e3c4decbe19e1caf6c395843e3742efe8595f))
+
 ## [1.0.3](https://github.com/rzvxa/dwait/compare/v1.0.2...v1.0.3) (2024-01-01)
 
 
