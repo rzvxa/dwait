@@ -102,8 +102,6 @@ function dwaitInternal<T, Y>(
       return dwaitInternal(
         then((target) => {
           if (typeof target !== "function") {
-            console.log(target, thisArg, args);
-            const numberOfArguments = args?.length || 0;
             throw new TypeError(
               `${target} is not a function, unexpected call to ${target} passing (${
                 args.join(", ") || "nothing"
