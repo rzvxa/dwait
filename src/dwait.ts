@@ -4,13 +4,13 @@ import type DeferredPromise from "./deferredPromise";
 /**
  * List of async methods to let pass through {@link DeferredPromise}
  */
-const asyncMethods = ["then", "catch", "finally"];
+const ASYNC_METHODS = ["then", "catch", "finally"];
 
 /**
  * It is just an empty function to point at
  */
 // istanbul ignore next no op code
-function noop() {}
+function DeferredOperation() {}
 
 /**
  * This function will take a `Promise` and will wrap it as a {@link DeferredPromise}
@@ -33,37 +33,37 @@ function dwaitInternal<T, Y>(
 ): DeferredPromise<T> {
   const task = Promise.resolve(promise);
   const result: Box<Promise<T>> = { value: undefined };
-  return new Proxy<object>(noop, {
+  const then = (callback?: (target: unknown) => Promise<T>): Promise<T> => {
+    return task.then((target) => {
+      result.value = target;
+      if (callback) {
+        return callback(target);
+      } else {
+        return target;
+      }
+    });
+  };
+  return new Proxy<object>(DeferredOperation, {
     get(_, symbol) {
       const prop = symbol as string;
-      if (asyncMethods.includes(prop)) {
+      if (ASYNC_METHODS.includes(prop)) {
         // @ts-expect-error we are sure that this property exists and is callable.
         return (...args: unknown[]) => dwaitInternal(task[prop](...args));
       } else if (prop === "await") {
-        return task.then((target) => {
-          result.value = target;
-          return target;
-        });
+        return then();
       } else if (prop === "toPromise") {
-        return () =>
-          task.then((target) => {
-            result.value = target;
-            return target;
-          });
+        return () => then();
       } else {
         return dwaitInternal(
-          task.then((target) => {
-            result.value = target;
-            // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
-            return target[prop];
-          }),
+          // @ts-expect-error this is just deferred actions of the user, and user has to make sure target property is a valid value
+          then((target) => target[prop]),
           result
         );
       }
     },
     apply(_, thisArg, args) {
       return dwaitInternal(
-        task.then((target) => {
+        then((target) => {
           if (lhs?.value !== undefined) {
             // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
             return Reflect.apply(target, lhs.value, args);
@@ -71,10 +71,11 @@ function dwaitInternal<T, Y>(
             // @ts-expect-error this is just deferred actions of the user, and user has to make sure target is a valid function
             return Reflect.apply(target, thisArg, args);
           }
-        })
+        }),
+        result
       );
     },
-  }) as DeferredPromise<T & { await: () => Promise<T> }>;
+  }) as DeferredPromise<T>;
 }
 
 /**
@@ -88,4 +89,4 @@ function dwait<T>(promise: Promise<T> | T): DeferredPromise<T> {
   return dwaitInternal(promise);
 }
 
-export { dwait };
+export default dwait;

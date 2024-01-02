@@ -1,4 +1,4 @@
-import { dwait } from "../src/dwait";
+import dwait from "../src/dwait";
 
 const OK = "OK";
 const ERROR = "ERROR";
@@ -61,68 +61,82 @@ describe("dwait Tests", () => {
     const dwaitPromise = dwait(resolveClass()).baz().bar();
     await expect(dwaitPromise.toPromise()).resolves.toEqual(NUMBER);
   });
+
   test("should return a DeferredPromise which has a await property containing the native promise of the operation chain", async () => {
     const dwaitPromise = dwait(resolveClass()).baz().foo;
     await expect(dwaitPromise.await).resolves.toEqual(OKB);
   });
+
   test("should return throw on awaiting rejected promises", async () => {
     const dwaitPromise = dwait(rejectMock());
     await expect(dwaitPromise).rejects.toEqual(ERROR);
   });
+
   test("should return a DeferredPromise<string> which contains split function acting like the native string", async () => {
     const dwaitPromise = dwait(resolveClass()).foo;
     await expect(dwaitPromise.split("K").await).resolves.toEqual(
       OKA.split("K")
     );
   });
+
   test("should return a DeferredPromise<string> which contains match function acting like the native string", async () => {
     const dwaitPromise = dwait(resolveClass()).foo;
     await expect(dwaitPromise.match(OK)?.await).resolves.toEqual(OKA.match(OK));
   });
+
   test("should return a DeferredPromise<string> which contains matchAll function acting like the native string", async () => {
     const matchResult = await dwait(resolveClass()).foo.matchAll(MATCH_OK)
       ?.await;
     expect(Array.from(matchResult)).toEqual(Array.from(OKA.matchAll(MATCH_OK)));
   });
+
   test("should return a DeferredPromise<string> which contains replace function acting like the native string", async () => {
     const dwaitPromise = dwait(resolveClass()).foo;
     await expect(
       dwaitPromise.replace(OK, NUMBER.toString())?.await
     ).resolves.toEqual(OKA.replace(OK, NUMBER.toString()));
   });
+
   test("should return a DeferredPromise<string> which contains search function acting like the native string", async () => {
     const dwaitPromise = dwait(resolveClass()).foo;
     await expect(dwaitPromise.search("K").await).resolves.toEqual(
       OKA.search("K")
     );
   });
+
   test("should return a DeferredPromise<object> which contains toString function acting like the native object", async () => {
     const dwaitPromise = dwait(resolveClass()).baz();
     await expect(dwaitPromise.toString()).resolves.toEqual(classA.toString());
   });
+
   test("should return a DeferredPromise which isn't callable", async () => {
     const dwaitPromise = dwait(resolveClass());
     // @ts-expect-error it isn't callabe
     await expect(dwaitPromise()).rejects.toThrow();
   });
+
   test("should provide a promise with the exact same result as native version", async () => {
     const dwaitPromise = dwait(resolveMock()).toPromise();
     await expect(dwaitPromise).resolves.toBe(OK);
   });
+
   test("should be able to wrap a constructor successfully", async () => {
     const dwaitPromise = dwait(new TestClass(OK, NUMBER, OK));
     await expect(dwaitPromise.await).resolves.toEqual(
       expect.objectContaining({ foo: OK + OK })
     );
   });
+
   test("should be able to wrap functions with returning promises", async () => {
     const dwaitPromise = dwait(new TestClass(OK, NUMBER, OK)).addBar();
     await expect(dwaitPromise.await).resolves.toEqual(NUMBER + 1);
   });
+
   test("should be able to wrap a function and use it as a deferred function", async () => {
     const dwaitFunc = dwait(resolveMock);
     await expect(dwaitFunc().await).resolves.toEqual(OK);
   });
+
   test("should be able to wrap cycling dependencies", async () => {
     let dwaitPromise = dwait(resolveClass());
     for (let i = 0, len = 999; i < len; ++i) {
