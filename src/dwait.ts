@@ -22,7 +22,7 @@ function DeferredOperation() {}
  */
 function isDeferredPromise(promise: unknown): boolean {
   // @ts-expect-error we are sure that this property exists and is callable.
-  return promise[DeferredPromiseSymbol];
+  return promise[DeferredPromiseSymbol] ? true : false;
 }
 
 /**
