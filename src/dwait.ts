@@ -21,8 +21,12 @@ function DeferredOperation() {}
  * @returns True if `promise` is a {@link DeferredPromise} otherwise will return false.
  */
 function isDeferredPromise(promise: unknown): boolean {
-  // @ts-expect-error we are sure that this property exists and is callable.
-  return promise[DeferredPromiseSymbol] ? true : false;
+  if (promise === null || promise === undefined) {
+    return false;
+  } else {
+    // @ts-expect-error we are sure that this property exists and is callable.
+    return promise[DeferredPromiseSymbol] ? true : false;
+  }
 }
 
 /**
