@@ -169,6 +169,33 @@ describe("dwait Tests", () => {
       new RangeError(`Property ${NUMBER} does not exists on undefined.`)
     );
   });
+
+  test("should throw on calling null or undefined DeferredPromise", async () => {
+    const nullPromise = dwait(null);
+    const undefinedPromise = dwait(undefined);
+    // @ts-expect-error Is is necessary for test to call it even tho it will throw
+    await expect(nullPromise()).rejects.toEqual(
+      new TypeError(
+        `null is not a function, unexpected call to null passing (nothing) as arguments.`
+      )
+    );
+    // @ts-expect-error Is is necessary for test to call it even tho it will throw
+    await expect(undefinedPromise()).rejects.toEqual(
+      new TypeError(
+        `undefined is not a function, unexpected call to undefined passing (nothing) as arguments.`
+      )
+    );
+  });
+
+  test("should throw on calling strings wrapped in DeferredPromise", async () => {
+    const strPromise = dwait(OK);
+    // @ts-expect-error Is is necessary for test to call it even tho it will throw
+    await expect(strPromise()).rejects.toEqual(
+      new TypeError(
+        `OK is not a function, unexpected call to OK passing (nothing) as arguments.`
+      )
+    );
+  });
 });
 
 describe("isDeferredPromise Tests", () => {
