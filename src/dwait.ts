@@ -1,5 +1,6 @@
 import type Box from "./box";
 import type DeferredPromise from "./deferredPromise";
+import DeferredPromiseSymbol from "./deferredPromiseSymbol";
 
 /**
  * List of async methods to let pass through {@link DeferredPromise}
@@ -11,6 +12,18 @@ const ASYNC_METHODS = ["then", "catch", "finally"];
  */
 // istanbul ignore next no op code
 function DeferredOperation() {}
+
+/**
+ * Checks the input to see if it is a {@link DeferredPromise} or not.
+ *
+ * @param promise - The input to test.
+ *
+ * @returns True if `promise` is a {@link DeferredPromise} otherwise will return false.
+ */
+function isDeferredPromise(promise: unknown): boolean {
+  // @ts-expect-error we are sure that this property exists and is callable.
+  return promise[DeferredPromiseSymbol];
+}
 
 /**
  * This function will take a `Promise` and will wrap it as a {@link DeferredPromise}
@@ -31,6 +44,9 @@ function dwaitInternal<T, Y>(
   promise: Promise<T> | T,
   lhs?: Box<Y>
 ): DeferredPromise<T> {
+  if (isDeferredPromise(promise)) {
+    return promise as DeferredPromise<T>;
+  }
   const task = Promise.resolve(promise);
   const result: Box<Promise<T>> = { value: undefined };
   const then = (callback?: (target: unknown) => Awaited<T>): Promise<T> => {
@@ -42,6 +58,9 @@ function dwaitInternal<T, Y>(
   };
   const proxy = new Proxy<object>(DeferredOperation, {
     get(_, symbol) {
+      if (symbol === DeferredPromiseSymbol) {
+        return true;
+      }
       const prop = symbol as string;
       if (ASYNC_METHODS.includes(prop)) {
         // @ts-expect-error we are sure that this property exists and is callable.
@@ -97,4 +116,5 @@ function dwait<T>(promise: Promise<T> | T): DeferredPromise<T> {
   return dwaitInternal(promise);
 }
 
+export { isDeferredPromise };
 export default dwait;

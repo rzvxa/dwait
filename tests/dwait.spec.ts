@@ -145,6 +145,12 @@ describe("dwait Tests", () => {
     await expect(dwaitPromise.foo.await).resolves.toEqual(OKB);
   });
 
+  test("shouldn't defer an already deferred promise", async () => {
+    const dwaitPromise1 = dwait(resolveClass());
+    const dwaitPromise2 = dwait(dwaitPromise1);
+    expect(dwaitPromise1).toBe(dwaitPromise2);
+  });
+
   test("should return the same DeferredPromise as long as a reference of that DeferredPromise exists on the heap", async () => {
     const dwaitPromise1 = dwait(resolveClass());
     const dwaitPromise2 = dwait(resolveClass());
