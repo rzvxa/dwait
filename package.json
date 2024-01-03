@@ -3,15 +3,15 @@
   "version": "0.0.0-semantic-release",
   "description": "Deferred async operation made easy in JavaScript",
   "files": ["dist"],
-  "types": "./dist/dwait.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/dwait.d.ts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/dwait.esm.mjs"
       },
       "require": {
-        "types": "./dist/cjs/dwait.d.ts",
+        "types": "./dist/cjs/index.d.ts",
         "default": "./dist/dwait.common.js"
       }
     }
