@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/rzvxa/dwait/compare/v1.1.0...v1.1.1) (2024-01-03)
+
+
+### Bug Fixes
+
+* multiple output bundles using rollup. ([#7](https://github.com/rzvxa/dwait/issues/7)) ([83a001c](https://github.com/rzvxa/dwait/commit/83a001c1f4674f647c78366ffa8d71f1c3ba1b8b))
+
 # [1.1.0](https://github.com/rzvxa/dwait/compare/v1.0.3...v1.1.0) (2024-01-02)
 
 
