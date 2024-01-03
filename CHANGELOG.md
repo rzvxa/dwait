@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/rzvxa/dwait/compare/v1.1.3...v1.1.4) (2024-01-03)
+
+
+### Bug Fixes
+
+* remove caching with weak map after benchmarks. ([158f417](https://github.com/rzvxa/dwait/commit/158f417fcc775c9f080d1701a74cbe20cb42c94e))
+
 ## [1.1.3](https://github.com/rzvxa/dwait/compare/v1.1.2...v1.1.3) (2024-01-03)
 
 
