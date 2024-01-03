@@ -152,13 +152,6 @@ describe("dwait Tests", () => {
     expect(dwaitPromise1).toBe(dwaitPromise2);
   });
 
-  test("should return the same DeferredPromise as long as a reference of that DeferredPromise exists on the heap", async () => {
-    const klass = resolveClass();
-    const dwaitPromise1 = dwait(klass);
-    const dwaitPromise2 = dwait(klass);
-    expect(dwaitPromise1).toBe(dwaitPromise2);
-  });
-
   test("should throw on accessing properties on null or undefined deferred operations", async () => {
     const nullPromise = dwait(null)[NUMBER];
     const undefinedPromise = dwait(undefined)[NUMBER];
