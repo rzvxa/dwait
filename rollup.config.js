@@ -13,7 +13,7 @@ exports.default = {
       sourcemap: true,
     },
     {
-      file: "dist/dwait.common.js",
+      file: "dist/dwait.common.min.js",
       format: "cjs",
       plugins: [terser()],
       sourcemap: true,
