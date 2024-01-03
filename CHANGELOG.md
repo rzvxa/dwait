@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/rzvxa/dwait/compare/v1.1.1...v1.1.2) (2024-01-03)
+
+
+### Bug Fixes
+
+* exposing types in package.json. ([#8](https://github.com/rzvxa/dwait/issues/8)) ([70970df](https://github.com/rzvxa/dwait/commit/70970df64401fc0bab22f3ce95d274d7a01cef58))
+
 ## [1.1.1](https://github.com/rzvxa/dwait/compare/v1.1.0...v1.1.1) (2024-01-03)
 
 
