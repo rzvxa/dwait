@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/rzvxa/dwait/compare/v1.1.2...v1.1.3) (2024-01-03)
+
+
+### Bug Fixes
+
+* type exposure. ([#9](https://github.com/rzvxa/dwait/issues/9)) ([93b9f48](https://github.com/rzvxa/dwait/commit/93b9f487fd6eca9715909fa17400d361343eb850))
+
 ## [1.1.2](https://github.com/rzvxa/dwait/compare/v1.1.1...v1.1.2) (2024-01-03)
 
 
